@@ -84,7 +84,10 @@ public class AMQPConsumer extends AMQPSampler implements Interruptible, TestStat
                 delivery = consumer.nextDelivery(getReceiveTimeoutAsInt());
 
                 if(delivery == null){
-                    result.setResponseMessage("timed out");
+                    result.setResponseCode("204");
+                    result.setSuccessful(false);
+                    result.setResponseMessage("No messages delivered");
+                    result.sampleEnd();
                     return result;
                 }
 
