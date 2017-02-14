@@ -83,11 +83,10 @@ public class AMQPConsumer extends AMQPSampler implements Interruptible, TestStat
             for (int idx = 0; idx < loop; idx++) {
                 delivery = consumer.nextDelivery(getReceiveTimeoutAsInt());
 
-                if(delivery == null){
+                if(delivery == null) {
                     result.setResponseCode("204");
-                    result.setSuccessful(false);
+                    result.setSuccessful(true);
                     result.setResponseMessage("No messages delivered");
-                    result.sampleEnd();
                     return result;
                 }
 
@@ -98,6 +97,7 @@ public class AMQPConsumer extends AMQPSampler implements Interruptible, TestStat
                     String response = new String(delivery.getBody());
                     result.setSamplerData(response);
                     result.setResponseMessage(response);
+                    result.setBytes(response.getBytes("UTF-8").length);
                 }
                 else {
                     result.setSamplerData("Read response is false.");
@@ -145,7 +145,6 @@ public class AMQPConsumer extends AMQPSampler implements Interruptible, TestStat
         }
 
         trace("AMQPConsumer.sample ended");
-
         return result;
     }
 

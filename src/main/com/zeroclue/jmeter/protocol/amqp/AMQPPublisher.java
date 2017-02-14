@@ -83,6 +83,7 @@ public class AMQPPublisher extends AMQPSampler implements Interruptible {
         // aggregate samples.
         int loop = getIterationsAsInt();
         result.sampleStart(); // Start timing
+        long bytesSent = 0l;
         try {
             AMQP.BasicProperties messageProperties = getProperties();
             byte[] messageBytes = getMessageBytes();
@@ -93,7 +94,7 @@ public class AMQPPublisher extends AMQPSampler implements Interruptible {
                 // seen by iostat -cd 1. TPS value remains at 0.
 
                 channel.basicPublish(getExchange(), getMessageRoutingKey(), messageProperties, messageBytes);
-
+                bytesSent += messageBytes.length;
             }
 
             // commit the sample.
@@ -117,6 +118,7 @@ public class AMQPPublisher extends AMQPSampler implements Interruptible {
             result.setResponseMessage(ex.toString());
         }
         finally {
+            result.setSentBytes(bytesSent);
             result.sampleEnd(); // End timimg
         }
 
